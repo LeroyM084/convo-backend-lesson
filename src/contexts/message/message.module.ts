@@ -15,6 +15,7 @@ import { UserCredentialsEntity } from "../auth/entities/user_credentials.entitie
 import { PermissionsGuard } from "../../core/permissions/guards/permissions.guard";
 import { EventModule } from "../../core/event/event.module";
 import { LogMessageSentHandler } from "./handlers/log-message-sent.handler";
+import { MailerModule } from "../../core/mailer/mailer.module";
 
 @Module({
     imports: [
@@ -25,6 +26,7 @@ import { LogMessageSentHandler } from "./handlers/log-message-sent.handler";
             UserCredentialsEntity,
         ]),
         EventModule,
+        MailerModule,
     ],
     controllers: [MessageController],
     providers: [

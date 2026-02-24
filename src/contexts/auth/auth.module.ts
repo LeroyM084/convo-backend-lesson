@@ -12,11 +12,12 @@ import { JWTService } from "./jwt.service";
 import { UserProfileEntity } from "./entities/user_profile.entities";
 import { EventModule } from '../../core/event/event.module';
 import { SendUserRegisteredHandler } from "./handlers/send-user-registered";
+import { MailerModule } from '../../core/mailer/mailer.module';
 
 @Module({
     imports: [TypeOrmModule.forFeature([
         UserCredentialsEntity, UserProfileEntity
-    ]), EventModule],
+    ]), EventModule, MailerModule],
     controllers: [AuthController],
     providers: [AuthService, SendUserRegisteredHandler,
         { provide: AUTH_REPOSITORY, useClass: AuthRepository },

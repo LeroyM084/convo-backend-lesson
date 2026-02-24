@@ -6,7 +6,7 @@ import { MessageEntity } from "./entities/message.entities";
 import { ConversationEntity } from "../conversation/entities/conversation.entities";
 import { UserProfileEntity } from "../auth/entities/user_profile.entities";
 import { UserCredentialsEntity } from "../auth/entities/user_credentials.entities";
-import * as nodemailer from "nodemailer";
+import { MailerService } from "../../core/mailer";
 
 @Injectable()
 export class MessageNotificationCron {
@@ -15,12 +15,12 @@ export class MessageNotificationCron {
     constructor(
         @InjectRepository(MessageEntity)
         private readonly messageRepository: Repository<MessageEntity>,
-        @InjectRepository(ConversationEntity)
         private readonly conversationRepository: Repository<ConversationEntity>,
         @InjectRepository(UserProfileEntity)
         private readonly userProfileRepository: Repository<UserProfileEntity>,
         @InjectRepository(UserCredentialsEntity)
         private readonly userCredentialsRepository: Repository<UserCredentialsEntity>,
+        private readonly mailerService: MailerService,
     ) { }
 
     @Cron("0,30 * * * *")
@@ -120,21 +120,9 @@ export class MessageNotificationCron {
             return;
         }
 
-        // 5. Configuration Nodemailer avec un compte de test Ethereal
-        const testAccount = await nodemailer.createTestAccount();
-        const transporter = nodemailer.createTransport({
-            host: "smtp.ethereal.email",
-            port: 587,
-            secure: false,
-            auth: {
-                user: testAccount.user,
-                pass: testAccount.pass,
-            },
-        });
-
         const messagesToMarkAsSent = new Set<string>();
 
-        // 6. Envoyer un email par destinataire
+        // 5. Envoyer un email par destinataire
         for (const [credentialsId, messages] of recipientMessagesMap.entries()) {
             const credentials = credentialsMap.get(credentialsId);
             if (!credentials || !credentials.email) {
@@ -144,16 +132,20 @@ export class MessageNotificationCron {
             const unreadCount = messages.length;
 
             try {
-                const info = await transporter.sendMail({
-                    from: '"Conversation App" <noreply@conversationapp.com>',
-                    to: credentials.email,
-                    subject: "Vous avez de nouveaux messages non lus",
-                    text: `Vous avez ${unreadCount} message(s) non lu(s) dans vos conversations.`,
-                    html: `<p>Bonjour,</p><p>Vous avez <b>${unreadCount}</b> message(s) non lu(s) dans vos conversations.</p>`,
+                const result = await this.mailerService.sendUnreadMessagesNotification({
+                    email: credentials.email,
+                    username: credentials.email, // We don't have username, using email as fallback
+                    unreadCount,
+                    messages: messages.map(msg => ({
+                        content: msg.content,
+                        createdAt: msg.createdAt,
+                    })),
                 });
 
-                this.logger.log(`Notification email sent to ${credentials.email}: ${info.messageId}`);
-                this.logger.log(`Preview URL: ${nodemailer.getTestMessageUrl(info)}`);
+                this.logger.log(`Notification email sent to ${credentials.email}: ${result.messageId}`);
+                if (result.previewUrl) {
+                    this.logger.log(`Preview URL: ${result.previewUrl}`);
+                }
 
                 for (const msg of messages) {
                     messagesToMarkAsSent.add(msg.id);
@@ -163,7 +155,7 @@ export class MessageNotificationCron {
             }
         }
 
-        // 7. Marquer les messages comme "Mail envoyé" pour éviter les doublons
+        // 6. Marquer les messages comme "Mail envoyé" pour éviter les doublons
         if (messagesToMarkAsSent.size > 0) {
             await this.messageRepository.update(
                 { id: In(Array.from(messagesToMarkAsSent)) },
