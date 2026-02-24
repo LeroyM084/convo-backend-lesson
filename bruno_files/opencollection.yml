@@ -1,0 +1,17 @@
+opencollection: 1.0.0
+
+info:
+  name: Notes Backend API
+  description: Complete API test suite for the Notes Backend with token management
+  version: 1.0.0
+
+settings:
+  base_url: http://localhost:4000
+  
+bundled: false
+
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git

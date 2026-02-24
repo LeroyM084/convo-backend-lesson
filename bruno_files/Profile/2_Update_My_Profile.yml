@@ -1,0 +1,27 @@
+info:
+  name: Update My Profile
+  type: http
+  seq: 10
+
+http:
+  method: PUT
+  url: "http://localhost:4000/profile/me"
+  auth: inherit
+
+headers:
+  Authorization: "Bearer {{access_token}}"
+  Content-Type: application/json
+
+body:
+  json:
+    username: updatedusername
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+assertions:
+  - name: Update My Profile - Status is 200
+    script: expect(res.getStatus()).to.equal(200);

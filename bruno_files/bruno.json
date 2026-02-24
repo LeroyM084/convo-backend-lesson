@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Notes Backend",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

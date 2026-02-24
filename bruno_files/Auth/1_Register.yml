@@ -1,0 +1,30 @@
+info:
+  name: Register
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "http://localhost:4000/auth/register"
+  auth: inherit
+
+headers:
+  Content-Type: application/json
+
+body:
+  json:
+    email: testuser@example.com
+    password: "TestPassword123!"
+    username: testuser
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+assertions:
+  - name: Register - Status is 200
+    script: expect(res.getStatus()).to.equal(200);
+  - name: Register - Response is boolean true
+    script: expect(res.getBody()).to.equal(true);

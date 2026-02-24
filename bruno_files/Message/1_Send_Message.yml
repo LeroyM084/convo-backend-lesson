@@ -1,0 +1,32 @@
+info:
+  name: Send Message
+  type: http
+  seq: 7
+
+http:
+  method: POST
+  url: "http://localhost:4000/message/send"
+  auth: inherit
+
+headers:
+  Authorization: "Bearer {{access_token}}"
+  Content-Type: application/json
+
+body:
+  json:
+    content: "Hello, this is my first message!"
+    conversationId: "1"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+assertions:
+  - name: Send Message - Status is 201
+    script: expect(res.getStatus()).to.equal(201);
+  - name: Send Message - Has id
+    script: expect(res.getBody()).to.have.property("id");
+  - name: Send Message - Content matches
+    script: expect(res.getBody().content).to.equal("Hello, this is my first message!");

@@ -1,0 +1,30 @@
+info:
+  name: Update Conversation
+  type: http
+  seq: 6
+
+http:
+  method: PUT
+  url: "http://localhost:4000/conversation"
+  auth: inherit
+
+headers:
+  Authorization: "Bearer {{access_token}}"
+  Content-Type: application/json
+
+body:
+  json:
+    id: "1"
+    title: Updated Conversation Title
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+assertions:
+  - name: Update Conversation - Status is 200
+    script: expect(res.getStatus()).to.equal(200);
+  - name: Update Conversation - Title updated
+    script: expect(res.getBody().title).to.equal("Updated Conversation Title");

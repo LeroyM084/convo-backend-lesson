@@ -11,8 +11,18 @@ export class UserCredentialsEntity {
     passwordHash: string;
 
     @Index({ unique: true })
-    @Column({name: "email", type: "varchar", length: 255})
+    @Column({ name: "email", type: "varchar", length: 255 })
     email: string;
+
+    @Column({
+        type: 'bigint',
+        default: 0,
+        transformer: {
+            to: (value: bigint) => value,
+            from: (value: string) => BigInt(value),
+        },
+    })
+    rights: bigint;
 
     @CreateDateColumn({ name: "created_at" })
     createdAt: Date;

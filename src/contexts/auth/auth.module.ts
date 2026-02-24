@@ -16,10 +16,11 @@ import { UserProfileEntity } from "./entities/user_profile.entities";
         UserCredentialsEntity, UserProfileEntity
     ])],
     controllers: [AuthController],
-    providers: [AuthService, 
-        {provide: AUTH_REPOSITORY, useClass: AuthRepository},
-        {provide: PASSWORD_HASHER, useClass: PasswordHasherService},
-        {provide: JWT_SERVICE, useClass: JWTService}
+    providers: [AuthService,
+        { provide: AUTH_REPOSITORY, useClass: AuthRepository },
+        { provide: PASSWORD_HASHER, useClass: PasswordHasherService },
+        { provide: JWT_SERVICE, useClass: JWTService }
     ],
+    exports: [JWT_SERVICE]
 })
-export class AuthModule {}
+export class AuthModule { }
