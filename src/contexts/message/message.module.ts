@@ -12,21 +12,29 @@ import { MessageNotificationCron } from "./message-notification.cron";
 import { ConversationEntity } from "../conversation/entities/conversation.entities";
 import { UserProfileEntity } from "../auth/entities/user_profile.entities";
 import { UserCredentialsEntity } from "../auth/entities/user_credentials.entities";
+import { PermissionsGuard } from "../../core/permissions/guards/permissions.guard";
+import { EventModule } from "../../core/event/event.module";
+import { LogMessageSentHandler } from "./handlers/log-message-sent.handler";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([
-        MessageEntity,
-        ConversationEntity,
-        UserProfileEntity,
-        UserCredentialsEntity,
-    ])],
+    imports: [
+        TypeOrmModule.forFeature([
+            MessageEntity,
+            ConversationEntity,
+            UserProfileEntity,
+            UserCredentialsEntity,
+        ]),
+        EventModule,
+    ],
     controllers: [MessageController],
     providers: [
         MessageService,
         MessageNotificationCron,
+        LogMessageSentHandler,
         { provide: MESSAGE_REPOSITORY, useClass: MessageRepository },
         { provide: JWT_SERVICE, useClass: JWTService },
-        AuthGuard
+        AuthGuard,
+        PermissionsGuard,
     ],
 })
 export class MessageModule {}

@@ -7,4 +7,5 @@ export interface IConversationRepository {
     findConversationById(id: string): Promise<ConversationEntity | null>;
     updateConversation(entity: ConversationEntity): Promise<ConversationEntity>;
     deleteConversation(entity: ConversationEntity): Promise<void>;
+    findUserConversationsWithUnreadCount(userId: string): Promise<any>;
 }

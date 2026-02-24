@@ -2,10 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { buildGlobalValidationPipe } from './core/http/validation/validations.pipe';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { HttpExceptionFilter } from './core/http/exeptions/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(buildGlobalValidationPipe());
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   // Configuration Swagger
   const config = new DocumentBuilder()

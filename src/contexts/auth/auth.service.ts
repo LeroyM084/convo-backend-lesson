@@ -7,9 +7,9 @@ import { PasswordHasherService } from './password-hasher.service';
 import * as jwt from 'jsonwebtoken';
 import { JWT_SERVICE, JWTServiceInterface } from './interface/jwt.interface';
 import { JWTService } from './jwt.service';
-import { DomainError } from 'src/core/errors/domain-error';
 import { EVENT_BUS, EventBusPort } from '../../core/event/event-bus.port';
 import { UserRegisteredEvent } from './event/user-registered.event';
+import { InvalidCredentialsError, InvalidRefreshTokenError, UserNotFoundError } from './errors/auth.errors';
 
 @Injectable()
 export class AuthService {
@@ -47,11 +47,11 @@ export class AuthService {
   async login(dto: LoginDTO): Promise<object | null> {
     const userCredentials = await this.authRepository.findCredentialsByEmail(dto.email);
     if (!userCredentials) {
-      return null
+      throw new InvalidCredentialsError();
     }
 
     if (!await this.passwordHasher.compare(dto.password, userCredentials.passwordHash)) {
-      return null
+      throw new InvalidCredentialsError();
     }
 
     const acces_token = await this.jwtService.generateToken({ userCredentials });
@@ -68,17 +68,17 @@ export class AuthService {
     try {
       payload = await this.jwtService.verifyToken(refreshToken);
     } catch {
-      return null;
+      throw new InvalidRefreshTokenError();
     }
 
     const userCredentialsId = payload?.userCredentials?.id;
     if (!userCredentialsId) {
-      return null;
+      throw new InvalidRefreshTokenError();
     }
 
     const userCredentials = await this.authRepository.findCredentialsById(userCredentialsId);
     if (!userCredentials) {
-      return null;
+      throw new UserNotFoundError();
     }
 
     userCredentials.lastConnectionAt = new Date();
