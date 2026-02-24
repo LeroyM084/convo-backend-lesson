@@ -9,9 +9,13 @@ import { ConversationModule } from './contexts/conversation/conversation.module'
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { join } from 'path';
+import { EventModule } from './core/event/event.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    EventModule,
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -48,4 +52,4 @@ import { join } from 'path';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

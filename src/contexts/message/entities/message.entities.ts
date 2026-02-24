@@ -32,6 +32,12 @@ export class MessageEntity {
     @Column()
     conversationId: string;
 
+    @Column({ name: "is_read", type: "boolean", default: false })
+    isRead: boolean;
+
+    @Column({ name: "is_mail_sent", type: "boolean", default: false })
+    isMailSent: boolean;
+
     @CreateDateColumn({ name: "created_at" })
     createdAt: Date;
 }

@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req } from "@nestjs/common";
-import { LoginDTO, RegisterDTO } from "./types/auth.dto";
+import { LoginDTO, RegisterDTO, RefreshDTO } from "./types/auth.dto";
 import { UserLoggerPresenter } from "./types/auth.presenter";
 import { plainToInstance } from "class-transformer";
 import { AuthService } from "./auth.service";
@@ -16,5 +16,11 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     register(@Body() body: RegisterDTO): Promise<string | boolean> {
         return this.authService.register(body);
+    }
+
+    @Post("refresh")
+    @HttpCode(HttpStatus.OK)
+    refresh(@Body() body: RefreshDTO) {
+        return this.authService.refresh(body.refresh_token);
     }
 }

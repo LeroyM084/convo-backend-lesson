@@ -10,4 +10,8 @@ export interface IMessageRepository {
         conversationId: string
     ): Promise<MessageEntity>;
     getMessagesByConversationId(conversationId: string): Promise<MessageEntity[]>;
+    markMessagesAsReadForUser(
+        conversationId: string,
+        userId: string
+    ): Promise<void>;
 }

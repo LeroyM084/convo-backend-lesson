@@ -22,7 +22,14 @@ export class MessageController {
 
     @Get("conversation/:conversationId")
     @UseGuards(AuthGuard)
-    async getConversationMessages(@Param("conversationId") conversationId: string) {
-        return await this.messageService.getConversationMessages(conversationId);
+    async getConversationMessages(
+        @Param("conversationId") conversationId: string,
+        @Req() request: any
+    ) {
+        const userId = request.user?.id;
+        return await this.messageService.markConversationMessagesAsReadForUser(
+            conversationId,
+            userId
+        );
     }
 }

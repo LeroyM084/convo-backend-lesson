@@ -15,3 +15,8 @@ export class RegisterDTO {
     @IsString()
     username: string
 }
+
+export class RefreshDTO {
+    @IsString()
+    refresh_token: string
+}

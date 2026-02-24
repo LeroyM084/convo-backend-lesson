@@ -26,5 +26,8 @@ export class UserCredentialsEntity {
 
     @CreateDateColumn({ name: "created_at" })
     createdAt: Date;
+
+    @Column({ name: "last_connection_at", type: "timestamp", nullable: true })
+    lastConnectionAt: Date | null;
 }
 

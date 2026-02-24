@@ -24,5 +24,13 @@ export class MessageService {
   async getConversationMessages(conversationId: string): Promise<MessageEntity[]> {
     return await this.messageRepository.getMessagesByConversationId(conversationId);
   }
+
+  async markConversationMessagesAsReadForUser(
+    conversationId: string,
+    userId: string
+  ): Promise<MessageEntity[]> {
+    await this.messageRepository.markMessagesAsReadForUser(conversationId, userId);
+    return this.messageRepository.getMessagesByConversationId(conversationId);
+  }
 }
 

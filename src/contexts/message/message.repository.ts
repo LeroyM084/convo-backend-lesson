@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { MessageEntity } from "./entities/message.entities";
-import { Repository } from "typeorm";
+import { Not, Repository } from "typeorm";
 
 @Injectable()
 export class MessageRepository {
@@ -30,5 +30,19 @@ export class MessageRepository {
             relations: ['sender'],
             order: { createdAt: 'ASC' }
         });
+    }
+
+    async markMessagesAsReadForUser(
+        conversationId: string,
+        userId: string
+    ): Promise<void> {
+        await this.messageRepository.update(
+            {
+                conversationId,
+                senderId: Not(userId),
+                isRead: false,
+            },
+            { isRead: true }
+        );
     }
 }

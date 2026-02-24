@@ -11,5 +11,6 @@ export interface IAuthRepository {
     updateProfile(entity: any): Promise<any>;
     deleteProfile(entity: any): Promise<void>;
     findProfileByUsername(username: string): Promise<any>;
-
+    updateCredentials(entity: UserCredentialsEntity): Promise<UserCredentialsEntity>;
+    findCredentialsById(id: string): Promise<UserCredentialsEntity | null>;
 }
